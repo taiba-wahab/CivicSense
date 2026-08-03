@@ -2,11 +2,19 @@ from streamlit_autorefresh import st_autorefresh
 import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine
+from dotenv import load_dotenv
+import os
+
+
+# Load environment variables
+load_dotenv()
+
+DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 
 # Database connection
 engine = create_engine(
-    "postgresql://postgres:civicPASS@localhost:5432/CivicSense"
+    f"postgresql://postgres:{DB_PASSWORD}@localhost:5432/CivicSense"
 )
 
 
@@ -28,41 +36,45 @@ SELECT * FROM votes;
 df = pd.read_sql(query, engine)
 
 
-# Total votes
-total_votes = len(df)
+# Check if data exists
+if df.empty:
+    st.warning("No votes available yet. Waiting for data...")
+else:
 
-st.metric(
-    "Total Votes",
-    total_votes
-)
+    # Total votes
+    total_votes = len(df)
 
-
-# Candidate count
-st.subheader("Votes by Candidate")
-
-candidate_count = (
-    df["candidate"]
-    .value_counts()
-)
+    st.metric(
+        "Total Votes",
+        total_votes
+    )
 
 
-st.bar_chart(candidate_count)
+    # Candidate count
+    st.subheader("Votes by Candidate")
+
+    candidate_count = (
+        df["candidate"]
+        .value_counts()
+    )
+
+    st.bar_chart(candidate_count)
 
 
-# Constituency count
-st.subheader("Votes by Constituency")
+    # Constituency count
+    st.subheader("Votes by Constituency")
 
-constituency_count = (
-    df["constituency"]
-    .value_counts()
-)
+    constituency_count = (
+        df["constituency"]
+        .value_counts()
+    )
 
-st.bar_chart(constituency_count)
+    st.bar_chart(constituency_count)
 
 
-# Winner
-winner = candidate_count.idxmax()
+    # Winner
+    winner = candidate_count.idxmax()
 
-st.success(
-    f"Current Leading Candidate: {winner}"
-)
+    st.success(
+        f"Current Leading Candidate: {winner}"
+    )
