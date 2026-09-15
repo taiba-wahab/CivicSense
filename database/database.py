@@ -1,14 +1,18 @@
+import os
 import psycopg2
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def get_connection():
 
     connection = psycopg2.connect(
-        host="localhost",
-        database="CivicSense",
-        user="postgres",
-        password="civicPASS",
-        port="5432"
+        host=os.getenv("DB_HOST", "localhost"),
+        database=os.getenv("DB_NAME", "CivicSense"),
+        user=os.getenv("DB_USER", "postgres"),
+        password=os.getenv("DB_PASSWORD"),
+        port=os.getenv("DB_PORT", "5432")
     )
 
     return connection
