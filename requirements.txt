@@ -4,4 +4,5 @@ psycopg2-binary
 sqlalchemy
 kafka-python
 pyspark
-python-dotenvstreamlit-autorefresh==1.0.1
+python-dotenv
+streamlit-autorefresh==1.0.1
